@@ -15,6 +15,7 @@
  */
 package net.paoding.rose;
 
+import org.danielli.xultimate.rose.ViewPathHolder;
 import org.springframework.web.servlet.support.RequestContext;
 
 /**
@@ -32,7 +33,7 @@ public interface RoseConstants {
     /**
      * 视图文件在这个目录下
      */
-    public static final String VIEWS_PATH = "/views";
+    public static final String VIEWS_PATH = ViewPathHolder.viewPath;
 
     public static final String VIEWS_PATH_WITH_END_SEP = VIEWS_PATH + "/";
 

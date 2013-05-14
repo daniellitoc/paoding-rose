@@ -7,6 +7,7 @@ subprojects {
     group = "net.paoding"
     version = "1.2-SNAPSHOT"
 
+    sourceCompatibility = 1.6
     [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
     repositories {
@@ -33,10 +34,11 @@ subprojects {
 }
 
 project(':rose') {
+    archivesBaseName = "paoding-rose"
     dependencies {
-        compile project(':rose-context')
+        compile project(':context')
            testCompile "junit:junit:4.7"
-           compile "javax.servlet:servlet-api:2.4"
+           compile "javax.servlet:javax.servlet-api:3.1.0"
            compile "commons-logging:commons-logging:1.1.1"
            compile "commons-lang:commons-lang:2.6"
            compile "commons-collections:commons-collections:3.2.1"
@@ -53,10 +55,11 @@ project(':rose') {
     }
 }
 
-project(':rose-context') {
+project(':context') {
+    archivesBaseName = "paoding-rose-context"
     dependencies {
         testCompile "junit:junit:4.7"
-        compile "javax.servlet:servlet-api:2.4"
+        compile "javax.servlet:javax.servlet-api:3.1.0"
         compile "commons-logging:commons-logging:1.1.1"
         compile "commons-lang:commons-lang:2.6"
         compile "commons-collections:commons-collections:3.2.1"
@@ -65,11 +68,12 @@ project(':rose-context') {
     }
 }
 
-project(':rose-jade') {
+project(':jade') {
+    archivesBaseName = "paoding-rose-jade"
     dependencies {
-        compile project(':rose-context')
+        compile project(':context')
         testCompile "junit:junit:4.7"
-        compile "javax.servlet:servlet-api:2.4"
+        compile "javax.servlet:javax.servlet-api:3.1.0"
         compile "commons-logging:commons-logging:1.1.1"
         compile "commons-lang:commons-lang:2.6"
         compile "commons-jexl:commons-jexl:1.1"
@@ -80,11 +84,12 @@ project(':rose-jade') {
     }
 }
 
-project(':rose-pipe') {
+project(':pipe') {
+    archivesBaseName = "paoding-rose-pipe"
     dependencies {
         compile project(':rose')
         testCompile "junit:junit:4.7"
-        compile "javax.servlet:servlet-api:2.4"
+        compile "javax.servlet:javax.servlet-api:3.1.0"
         compile "javax.servlet:jsp-api:2.0"
         compile "com.metaparadigm:json-rpc:1.0"
     }

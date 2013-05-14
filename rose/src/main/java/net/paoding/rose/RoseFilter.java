@@ -54,7 +54,9 @@ import net.paoding.rose.web.impl.thread.Rose;
 import net.paoding.rose.web.instruction.InstructionExecutor;
 import net.paoding.rose.web.instruction.InstructionExecutorImpl;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.danielli.xultimate.rose.ViewPathHolder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.SpringVersion;
@@ -161,7 +163,6 @@ public class RoseFilter extends GenericFilterBean {
     private LoadScope load = new LoadScope("", "controllers");
 
     private IgnoredPath[] ignoredPaths = new IgnoredPath[] {
-            new IgnoredPathStarts(RoseConstants.VIEWS_PATH_WITH_END_SEP),
             new IgnoredPathEquals("/favicon.ico") };
 
     /**
@@ -238,6 +239,19 @@ public class RoseFilter extends GenericFilterBean {
         }
         this.ignoredPaths = ignoredPaths;
     }
+    
+    public void setViewPath(String viewPath) {
+        if (StringUtils.isBlank(viewPath)) {
+            throw new IllegalArgumentException("viewPath");
+        }
+    	ViewPathHolder.viewPath = viewPath;
+    }
+    
+    private void resetIgnoredPaths() {
+    	if (ArrayUtils.isNotEmpty(this.ignoredPaths)) {
+    		ArrayUtils.add(this.ignoredPaths, 0, new IgnoredPathStarts(RoseConstants.VIEWS_PATH_WITH_END_SEP));
+    	}
+    }
 
     /**
      * 实现 {@link GenericFilterBean#initFilterBean()}，对 Rose 进行初始化
@@ -245,6 +259,8 @@ public class RoseFilter extends GenericFilterBean {
 
     @Override
     protected final void initFilterBean() throws ServletException {
+    	resetIgnoredPaths();
+    	
         try {
         	
         	long startTime = System.currentTimeMillis();
@@ -391,20 +407,22 @@ public class RoseFilter extends GenericFilterBean {
 
         ApplicationContext oldRootContext = (ApplicationContext) getServletContext().getAttribute(
                 ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
-
+        boolean hasParent = false;
         // 如果web.xml配置使用了spring装载root应用context ...... 不可以
         // roseFilter可能因为启动失败，在请求的时候容器还会尝试重新启动，此时rootContext可能已经存在，不要简单地抛出异常
         // 同时这样留出了使用Listener作为init rose context的扩展机会
         if (oldRootContext != null) {
             if (oldRootContext.getClass() != RoseWebAppContext.class) {
-                throw new IllegalStateException(
-                        "Cannot initialize context because there is already a root application context present - "
-                                + "check whether you have multiple ContextLoader* definitions in your web.xml!");
+//                throw new IllegalStateException(
+//                        "Cannot initialize context because there is already a root application context present - "
+//                                + "check whether you have multiple ContextLoader* definitions in your web.xml!");
+            	hasParent = true;
+            } else {
+            	 if (logger.isInfoEnabled()) {
+                     logger.info("[init/rootContext] the root context exists:" + oldRootContext);
+                 }
+                 return (RoseWebAppContext) oldRootContext;
             }
-            if (logger.isInfoEnabled()) {
-                logger.info("[init/rootContext] the root context exists:" + oldRootContext);
-            }
-            return (RoseWebAppContext) oldRootContext;
         }
 
         RoseWebAppContext rootContext = new RoseWebAppContext(getServletContext(), load, false);
@@ -422,7 +440,9 @@ public class RoseFilter extends GenericFilterBean {
         }
         rootContext.setConfigLocation(contextConfigLocation);
         rootContext.setId("rose.root");
-        
+        if (hasParent) {
+        	rootContext.setParent(oldRootContext);
+        }
         rootContext.refresh();
 
         if (logger.isInfoEnabled()) {

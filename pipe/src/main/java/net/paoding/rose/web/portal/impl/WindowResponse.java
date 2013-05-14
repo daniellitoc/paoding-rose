@@ -22,6 +22,7 @@ import java.io.Writer;
 import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import net.paoding.rose.web.portal.Window;
@@ -70,6 +71,20 @@ class WindowResponse extends HttpServletResponseWrapper {
                     baos.reset();
                     window.appendContent(new String(bytes, getCharacterEncoding()));
                 }
+
+				@Override
+				public boolean isReady() {
+					if (baos.size() == getBufferSize()) {
+						return false;
+					} else {
+						return true;
+					}
+				}
+
+				@Override
+				public void setWriteListener(WriteListener writeListener) {
+					
+				}
 
             };
         }
