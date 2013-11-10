@@ -5,18 +5,21 @@
 
 ## 附加功能 ##
 
-* 模板配置路径。通过web.xml文件中filter元素的子元素
+1.模板配置路径。通过web.xml文件中filter元素的子元素。如下：
+
 	<init-param>
 		<param-name>viewPath</param-name>
 		<param-value>/WEB-INF/template/</param-value>
 	</init-param>
-  实现。
-* 支持Servlet 3.0。
-* 正式环境删除/rose-info的地址发布。通过web.xml文件中filter元素的子元素
+
+2.正式环境删除/rose-info的地址发布。通过web.xml文件中filter元素的子元素。如下：
+
 	<init-param>
 		<param-name>moduleResourceProviderClass</param-name>
-		<param-value>com.binzhi.controllers.scanner.SimpleModuleResourceProviderImpl</param-value>
+		<param-value>org.danielli.xultimate.rose.scanner.LeastModuleResourceProviderImpl</param-value>
 	</init-param>
-  实现。
-* 支持org.springframework.web.context.ContextLoaderListener监听器与RoseFilter配合使用。因为可能在Listener中需要获取Spring定义的Bean。
+
+3.支持Servlet 3.0。
+
+4.支持ContextLoaderListener监听器与RoseFilter配合使用。因为需要在Listener中获取Spring定义的Bean。
 
